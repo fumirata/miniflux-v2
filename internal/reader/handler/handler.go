@@ -267,6 +267,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 			return locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
 		}
 		originalFeed.WithTranslatedErrorMessage(localizedError.Translate(user.Language))
+		originalFeed.ScheduleNextCheck(weeklyEntryCount, refreshDelay)
 		store.UpdateFeedError(originalFeed)
 		return localizedError
 	}

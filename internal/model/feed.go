@@ -6,6 +6,7 @@ package model // import "miniflux.app/v2/internal/model"
 import (
 	"fmt"
 	"io"
+	"math"
 	"time"
 
 	"miniflux.app/v2/internal/config"
@@ -119,6 +120,12 @@ func (f *Feed) CheckedNow() {
 
 // ScheduleNextCheck set "next_check_at" of a feed based on the scheduler selected from the configuration.
 func (f *Feed) ScheduleNextCheck(weeklyCount int, refreshDelay time.Duration) time.Duration {
+	if f.ParsingErrorCount > 0 {
+		interval := time.Duration(60.0*math.Pow(1.34, float64(f.ParsingErrorCount))) * time.Second
+		interval = min(interval, 24*time.Hour)
+		f.NextCheckAt = time.Now().Add(interval)
+		return interval
+	}
 	// Default to the global config Polling Frequency.
 	interval := config.Opts.SchedulerRoundRobinMinInterval()
 
