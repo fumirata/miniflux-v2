@@ -570,7 +570,7 @@ function initializeFormHandlers() {
  */
 function showKeyboardShortcutsAction() {
     const template = document.getElementById("keyboard-shortcuts");
-    ModalHandler.open(template.content, "dialog-title");
+    KeyboardModalHandler.open(template.content, "dialog-title");
 }
 
 /**
@@ -1215,7 +1215,7 @@ function initializeKeyboardShortcuts() {
 
     // UI actions
     keyboardHandler.on("?", showKeyboardShortcutsAction);
-    keyboardHandler.on("Escape", () => ModalHandler.close());
+    keyboardHandler.on("Escape", () => KeyboardModalHandler.close());
     keyboardHandler.on("a", () => {
         const enclosureElement = document.querySelector('.entry-enclosures');
         if (enclosureElement) {
@@ -1230,8 +1230,10 @@ function initializeKeyboardShortcuts() {
  * Initialize touch handler for mobile devices.
  */
 function initializeTouchHandler() {
-    const touchHandler = new TouchHandler();
-    touchHandler.listen();
+    if ( "ontouchstart" in window || navigator.maxTouchPoints > 0) {
+        const touchHandler = new TouchHandler();
+        touchHandler.listen();
+    }
 }
 
 /**
